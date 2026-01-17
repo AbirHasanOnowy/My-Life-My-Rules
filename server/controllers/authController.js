@@ -14,7 +14,7 @@ const generateToken = (id) => {
 const setTokenCookie = (res, token) => {
   res.cookie("accessToken", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "lax",
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
@@ -87,39 +87,47 @@ export const loginUser = asyncHandler(async (req, res) => {
 // @desc    Google login
 // @route   POST /api/auth/google
 export const googleLogin = asyncHandler(async (req, res) => {
-  const { credential } = req.body;
+  try {
+    const { credential } = req.body;
 
-  const ticket = await googleClient.verifyIdToken({
-    idToken: credential,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
+    if (!credential)
+      res.status(400).json({ message: "Missing credential for google aith" });
 
-  const payload = ticket.getPayload();
-  const { email, name, picture } = payload;
-
-  let user = await User.findOne({ email });
-
-  if (!user) {
-    user = await User.create({
-      name,
-      email,
-      avatar: picture,
-      authProvider: "google",
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
-  } else if (user.authProvider === "local") {
-    user.authProvider = "google";
-    user.avatar = picture;
-    await user.save();
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        avatar: picture,
+        authProvider: "google",
+      });
+    } else if (user.authProvider === "local") {
+      user.authProvider = "google";
+      user.avatar = picture;
+      await user.save();
+    }
+
+    const token = generateToken(user._id);
+    setTokenCookie(res, token);
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: "Invalid Google Token" });
   }
-
-  const token = generateToken(user._id);
-  setTokenCookie(res, token);
-
-  res.json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-  });
 });
 
 // @desc    Get current user
