@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 
 // route imports
 import authRoutes from "./routes/authRoutes.js";
+import { notFound, errorHandler } from "./middleware/errorHandlerMiddleware.js";
 
 // Load environment variables
 dotenv.config();
@@ -45,11 +46,15 @@ app.get("/", (req, res) => {
 /* -------------------- ERROR HANDLING -------------------- */
 
 // 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Route not found",
-  });
-});
+app.use(notFound);
+// app.use((req, res) => {
+//   res.status(404).json({
+//     message: "Route not found",
+//   });
+// });
+
+// Error
+app.use(errorHandler);
 
 /* -------------------- SERVER -------------------- */
 
