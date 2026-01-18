@@ -6,6 +6,7 @@ import connectDB from "./config/db.js";
 
 // route imports
 import authRoutes from "./routes/authRoutes.js";
+import diaryRoutes from "./routes/diaryRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorHandlerMiddleware.js";
 
 // Load environment variables
@@ -29,11 +30,12 @@ app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:3000",
     credentials: true,
-  })
+  }),
 );
 
 /* -------------------- ROUTES -------------------- */
 app.use("/api/auth", authRoutes);
+app.use("/api/diary", diaryRoutes);
 
 // Health check
 app.get("/", (req, res) => {

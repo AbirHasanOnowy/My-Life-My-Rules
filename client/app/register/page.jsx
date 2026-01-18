@@ -93,7 +93,7 @@ export default function SignupPage() {
                 {/* Right side - Form */}
                 <div className="flex-1 flex flex-col justify-center p-12">
                     <h2 className="text-3xl font-semibold mb-2 text-black">
-                        Create Account
+                        My Life, My Rules
                     </h2>
                     <p className="text-gray-900 mb-8">
                         Sign up to get started
