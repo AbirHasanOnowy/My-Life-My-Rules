@@ -7,6 +7,8 @@ import connectDB from "./config/db.js";
 // route imports
 import authRoutes from "./routes/authRoutes.js";
 import diaryRoutes from "./routes/diaryRoutes.js";
+import activityRoutes from "./routes/activityRoutes.js";
+import summaryRoutes from "./routes/summaryRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorHandlerMiddleware.js";
 
 // Load environment variables
@@ -34,8 +36,10 @@ app.use(
 );
 
 /* -------------------- ROUTES -------------------- */
-app.use("/api/auth", authRoutes);
-app.use("/api/diary", diaryRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/diary", diaryRoutes);
+app.use("/api/v1/activities", activityRoutes);
+app.use("/api/v1/summary", summaryRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
