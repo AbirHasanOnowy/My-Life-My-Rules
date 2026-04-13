@@ -36,10 +36,10 @@ app.use(
 );
 
 /* -------------------- ROUTES -------------------- */
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/diary", diaryRoutes);
-app.use("/api/v1/activities", activityRoutes);
-app.use("/api/v1/summary", summaryRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/diary", diaryRoutes);
+app.use("/api/activities", activityRoutes);
+app.use("/api/summary", summaryRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

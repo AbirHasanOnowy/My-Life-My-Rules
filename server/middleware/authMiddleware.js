@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 
 // Protect routes
-export const protect = asyncHandler(async (req, res, next) => {
+const protect = asyncHandler(async (req, res, next) => {
   let token;
 
   // 1️⃣ Get token from HTTP-only cookie or Authorization header
@@ -37,7 +37,7 @@ export const protect = asyncHandler(async (req, res, next) => {
 });
 
 // Role-based access (optional)
-export const authorize = (...roles) => {
+const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       res.status(403);
@@ -46,3 +46,6 @@ export const authorize = (...roles) => {
     next();
   };
 };
+
+export default protect;
+export { protect, authorize };

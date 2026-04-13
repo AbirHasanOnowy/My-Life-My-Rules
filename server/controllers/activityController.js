@@ -1,20 +1,22 @@
 import Activity from "../models/Activity.js";
 import DailySummary from "../models/DailySummary.js";
+import { CATEGORY_MAP, CATEGORY } from "../utils/constants.js";
 
 /**
  * Category mapping
+ * imported FROM utils/categoryMap.js
  */
-const CATEGORY_MAP = {
-  focused: 0,
-  maintenance: 1,
-  leisure: 2,
-};
+// const CATEGORY_MAP = {
+//   focused: 0,
+//   maintenance: 1,
+//   leisure: 2,
+// };
 
-const REVERSE_CATEGORY = {
-  0: "focused",
-  1: "maintenance",
-  2: "leisure",
-};
+// const REVERSE_CATEGORY = {
+//   0: "focused",
+//   1: "maintenance",
+//   2: "leisure",
+// };
 
 /**
  * Helper: update daily summary
@@ -49,23 +51,26 @@ export const createActivity = async (req, res) => {
     const u = req.user.id;
     const { title, category, duration, date } = req.body;
 
-    const c = CATEGORY_MAP[category];
-    if (c === undefined) {
+    // const c = CATEGORY_MAP[category];
+    if (category === undefined || category < 0 || category > 2) {
       return res.status(400).json({ message: "Invalid category" });
     }
+
+    console.log("Creating activity:", { u, title, category, duration, date });
 
     const activity = await Activity.create({
       u,
       t: title,
-      c,
+      c: category,
       d: duration,
       dt: date,
     });
 
-    await updateSummary(u, date, c, duration, "inc");
+    await updateSummary(u, date, category, duration, "inc");
 
     res.status(201).json(activity);
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -104,6 +109,8 @@ export const getActivitiesRange = async (req, res) => {
     const u = req.user.id;
     const start = Number(req.query.start);
     const end = Number(req.query.end);
+
+    console.log("Range query:", { u, start, end });
 
     const activities = await Activity.find({
       u,
@@ -147,8 +154,10 @@ export const updateActivity = async (req, res) => {
     await updateSummary(u, dt, oldCategory, oldDuration, "dec");
 
     const newCategory =
-      CATEGORY_MAP[category] !== undefined
-        ? CATEGORY_MAP[category]
+      category !== undefined
+        ? category < 0 || category > 2
+          ? null
+          : category
         : oldCategory;
 
     activity.t = title ?? activity.t;

@@ -43,4 +43,6 @@ const activitySchema = new mongoose.Schema(
 activitySchema.index({ u: 1, dt: 1 });
 activitySchema.index({ u: 1, c: 1 });
 
-export const Activity = mongoose.model("Activity", activitySchema);
+const Activity = mongoose.model("Activity", activitySchema);
+
+export default Activity;

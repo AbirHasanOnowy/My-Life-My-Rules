@@ -3,9 +3,9 @@ import {
   getDailySummary,
   getSummaryRange,
   getSummaryStats,
-} from "../controllers/summary.controller.js";
+} from "../controllers/summaryController.js";
 
-import authMiddleware from "../middlewares/auth.middleware.js";
+import authMiddleware  from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 

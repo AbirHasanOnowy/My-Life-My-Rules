@@ -1,4 +1,5 @@
 import DailySummary from "../models/DailySummary.js";
+import mongoose from "mongoose";
 
 /**
  * 📅 Daily Summary
@@ -72,23 +73,28 @@ export const getSummaryStats = async (req, res) => {
     const start = Number(req.query.start);
     const end = Number(req.query.end);
 
+    if (!start || !end || isNaN(start) || isNaN(end)) {
+      return res.status(400).json({ message: "Invalid date range" });
+    }
+
     const result = await DailySummary.aggregate([
       {
         $match: {
-          u,
+          u: new mongoose.Types.ObjectId(u),
           dt: { $gte: start, $lte: end },
         },
       },
       {
         $group: {
           _id: null,
-          focused: { $sum: "$f" },
-          maintenance: { $sum: "$m" },
-          leisure: { $sum: "$l" },
-          total: { $sum: "$total" },
-        },
+          focused: { $sum: { $ifNull: ["$f", 0] } },
+          maintenance: { $sum: { $ifNull: ["$m", 0] } },
+          leisure: { $sum: { $ifNull: ["$l", 0] } },
+          total: { $sum: { $ifNull: ["$total", 0] } },
+        }
       },
     ]);
+
 
     res.json(
       result[0] || {

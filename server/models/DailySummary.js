@@ -33,6 +33,7 @@ const dailySummarySchema = new mongoose.Schema(
     total: {
       type: Number,
       default: 0,
+      max: 24 * 60, // max minutes in a day
     },
   },
   {
@@ -43,4 +44,6 @@ const dailySummarySchema = new mongoose.Schema(
 // One summary per user per day
 dailySummarySchema.index({ u: 1, dt: 1 }, { unique: true });
 
-export const DailySummary = mongoose.model("DailySummary", dailySummarySchema);
+const DailySummary = mongoose.model("DailySummary", dailySummarySchema);
+
+export default DailySummary;

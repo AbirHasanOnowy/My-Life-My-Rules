@@ -7,16 +7,16 @@ import User from "../models/User.js";
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "7d",
   });
 };
 
 const setTokenCookie = (res, token) => {
   res.cookie("accessToken", token, {
     httpOnly: true,
-    secure: true,
+    secure: false, // Set to true in production with HTTPS
     sameSite: "lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 };
 
